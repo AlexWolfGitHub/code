@@ -1,0 +1,12 @@
+[
+  {
+    "properties": "password,confirmPassword",
+    "allMatch": true,
+    "allMatchIllegal": "两次输入的密码不一致",
+    "target": "confirmPassword"
+  },
+  {
+    "property": "areaCode",
+    "notBlank": true
+  }
+]

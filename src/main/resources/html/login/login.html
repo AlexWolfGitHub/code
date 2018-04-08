@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户登录</title>
+    <link href="/static/css/controls.css" rel="stylesheet"/>
+    <link href="/static/css/engine.css" rel="stylesheet">
+    <script src="/bower_components/requirejs/require.js" data-main="/static/app.js"
+            data-bootstrap-modules="'system/userManagement/LoginModule'"></script>
+    <script>
+        var ctx = '';
+        var basePath = '/gillion-web';
+    </script>
+</head>
+
+<body>
+<!--用户登录-->
+<div class="user-login" ng-controller="LoginController">
+    <div class="system-name system-name-login"><img src="../../static/images/logo-a.png" style="vertical-align:middle;padding-right:10px;">EDS管理系统</div>
+    <!--登录信息-->
+
+    <div class="login-information" ng-cloak>
+        <div class=""><input type="text" name="" class="user-name" placeholder="请输入用户名" ng-model="user.username"></div>
+        <div class=""><input type="password" name="" class="password" placeholder="请输入密码" ng-model="user.password"></div>
+        <div class=""><input type="text" name="" class="verification-code" placeholder="请输入验证码" ng-keyup="myKeyup($event)"ng-model="user.captcha"><a href=""><img src="/grule-manager/getcaptcha.sl" alt="验证码" name="checkImg" id="checkImg" style="position:relative; top:10px; left:20px; " onClick="document.getElementById('checkImg').src='/grule-manager/getcaptcha.sl?temp='+ (new Date().getTime().toString(36)); return false"/></a></div>
+        <button type="button" class="engine-btn-login" ng-click="login()">登录</button>
+    <!--登录信息结束-->
+</div>
+    </div>
+<!--用户登录结束-->
+</body>
+</html>

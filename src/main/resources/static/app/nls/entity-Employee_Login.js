@@ -1,0 +1,1 @@
+define({"en-us":true,"root":{"Require.employee.password":"员工密码是必要字段","Require.employee.name":"员工姓名是必要字段"}});

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EDS控制台</title>
+    <link rel="stylesheet" href="cron/fontas/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css"/>
+    <link href="../static/css/controls.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="../static/css/font-awesome/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="../static/css/style.css"/>
+    <style>
+        [ng-cloak] { display: none; }
+    </style>
+    <script>
+        var ctx = '';
+        var basePath = '/gillion-web';
+    </script>
+    <script src="../bower_components/requirejs/require.js" data-main="../static/app.js"
+            data-bootstrap-modules="'system/IndexModule'"></script>
+</head>
+<body ng-controller="IndexController" on-finish-render>
+<div class="wrapper elastic-layout">
+    <div class="group"></div>
+    <aside class="main-sidebar">
+        <div class="header logo">
+            EDS管理台
+            <span class="fa fa-cog"></span>
+        </div>
+
+        <ul class="menu" ng-cloak style="overflow: auto;position: relative" ng-style="menuStyle">
+            <li class="project">
+                <div ng-if="!currProject" ng-mouseenter="selectProjects()">
+                    <a href="javascript:void(0)">
+                        <i class="fa fa-list-alt"></i>
+                        <span>在下方选择项目</span>
+                        <span class="fa fa-caret"></span>
+                    </a>
+                </div>
+                <div ng-if="currProject" ng-mouseenter="selectProjects()">
+                    <a href="javascript:void(0)">
+                        <i class="fa fa-list-alt"></i>
+                        <span>{{currProject.projectName}}</span>
+                        <span class="fa fa-caret"></span>
+                    </a>
+                </div>
+                <div id="selectProject" style="height: 300px;width:196px;overflow: auto;position: relative">
+                    <ul>
+                        <li ng-repeat="x in projects" ng-click="selectProject(x)" ng-cloak>
+                            <a href="javascript:void(0)">
+                                <i class="fa fa-list-alt"></i>
+                                <span>{{x.projectName}}</span>
+                            </a>
+                            <p class="desc">
+                                {{x.remark}}
+                            </p>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li>
+                <a href="#/projects/{{projectName}}">
+                    <i class="fa fa-dashboard"></i>
+                    <span>监控面板</span>
+                </a>
+            </li>
+            <li>
+                <a href="#/projects/{{projectName}}/services">
+                    <i class="fa fa-dashboard"></i>
+                    <span>服务拓扑图</span>
+                </a>
+            </li>
+            <li>
+                <a href="#/projectId/{{projectId}}/projectName/{{projectName}}/gatewayManager">
+                    <i class="fa fa-slack"></i>
+                    <span>网关配置</span>
+                </a>
+            </li>
+            <li>
+                <a href="javascript:void(0)" class="navt">
+                    <i class="fa fa-dashboard"></i>
+                    <span>服务治理</span>
+                </a>
+                <ul class="node">
+                    <li><a href="#/projectName/{{projectName}}/serviceManager">服务管理</a></li>
+                    <li><a href="#/projectName/{{projectName}}/serviceGroupManager">服务组管理</a></li>
+                    <li><a href="#/projectName/{{projectName}}/BreakerServiceManager">熔断管理</a></li>
+                    <li><a href="#/projectName/{{projectName}}/responseTimeoutManager">超时管理</a></li>
+                    <li><a href="#/projectName/{{projectName}}/threadlsolationManager">线程隔离管理</a></li>
+                    <li><a href="#/projectId/{{projectId}}/projectName/{{projectName}}/routeConfig">服务路由管理</a></li>
+                    <li><a href="#/projectName/{{projectName}}/rateLimitManager">限流管理</a></li>
+                    <li><a href="#/projectName/{{projectName}}/RetryServiceManager">重试策略管理</a></li>
+                    <li><a href="#/projectName/{{projectName}}/loggerLevelManager">日志级别管理</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#/projectId/{{projectId}}/projectName/{{projectName}}/timerManager">
+                    <i class="fa fa-dashboard"></i>
+                    <span>定时调度</span>
+                </a>
+            </li>
+            <li>
+                <a href="#/projectName/{{projectName}}/{{projectId}}/mqTopic">
+                    <i class="fa fa-dashboard"></i>
+                    <span>队列管理</span>
+                </a>
+            </li>
+            <li>
+                <a href="#/applicationDeployment">
+                    <i class="fa fa-dashboard"></i>
+                    <span>应用部署</span>
+                </a>
+            </li>
+            <!--<li>-->
+                <!--<a href="#">-->
+                    <!--<i class="fa fa-dashboard"></i>-->
+                    <!--<span>测试管理</span>-->
+                <!--</a>-->
+            <!--</li>-->
+            <li>
+                <a href="#/projectName/{{projectName}}/log">
+                    <i class="fa fa-dashboard"></i>
+                    <span>日志查询</span>
+                </a>
+            </li>
+            <li>
+                <a href="javascript:void(0)" class="navt">
+                    <i class="fa fa-dashboard"></i>
+                    <span>系统管理</span>
+                </a>
+                <ul class="node">
+                    <li><a href="#/user">用户管理</a></li>
+                    <li><a href="#/projectManager">项目管理</a></li>
+                    <li><a href="#/projectId/{{projectId}}/projectName/{{projectName}}/dataSourceConfig">数据源管理</a></li>
+                    <li>
+                        <a href="#/projectId/{{projectId}}/projectName/{{projectName}}/dictConfig">
+                           字典管理
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="javascript:void(0)" class="navt">
+                    <i class="fa fa-dashboard"></i>
+                    <span>系统监控</span>
+                </a>
+                <ul class="node">
+                    <li><a href="#/system/{{projectName}}/mqMonitor">MQ监控</a></li>
+                    <li><a href="#">服务监控</a></li>
+                    <li><a href="#">异常监控</a></li>
+                    <li><a href="#">调度监控</a></li>
+                </ul>
+            </li>
+
+        </ul>
+    </aside>
+
+    <div class="content-wrapper">
+        <div class="header">
+            <a href="#" class="back">
+                <i class="fa fa-chevron-left"></i>
+            </a>
+
+            <span class="title" id="titleName"></span>
+
+            <ul class="user-info">
+                <li>
+                    <i class="fa fa-clock-o"></i>
+                    10:46
+                </li>
+                <li>
+                    <i class="fa fa-calendar"></i>
+                    2016/12/9
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fa fa-user-circle-o"></i>
+                        五小白
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+
+        <ng-view>
+        </ng-view>
+    </div>
+</div>
+</body>
+</html>

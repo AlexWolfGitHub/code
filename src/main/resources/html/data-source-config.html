@@ -1,0 +1,168 @@
+<div>
+    <div class="tab-content">
+        <div class="content elastic-layout" id="dataSourceConfigManager">
+            <div class="content-sidebar">
+                <div class="tool-box">
+                    <a href="javascript:void(0)" ng-click="add()"><i class="fa fa-plus"></i></a>
+                </div>
+
+                <dl class="search-box">
+                    <dt class="title">查询条件</dt>
+                    <dd>
+                        <form>
+                            <div class="form-group">
+                                <label>数据源名称</label>
+                                <input type="text" class="form-control" placeholder="消费组名称"
+                                       ng-model="dataSourceConfigParams.dataSourceName"/>
+                            </div>
+                            <div class="form-group">
+                                <label>数据源驱动</label>
+                                <input type="text" class="form-control" placeholder="数据源驱动"
+                                       ng-model="dataSourceConfigParams.connectionPool"/>
+                            </div>
+                            <button type="button" class="btn btn-default" ng-click="searchDataSourceConfig()">查询
+                            </button>
+                        </form>
+                    </dd>
+                </dl>
+            </div>
+            <div class="content-main pl210 elastic-layout">
+                <div class="grid-container elastic-layout elastic-grid">
+                    <g-data-source
+                            url="/esb-manager/projects/:projectName/dataSourceConfig"
+                            page-size="10"
+                            current-page="1"
+                            records-prop="records"
+                            total-page-field="totalPage"
+                            data-params="dataSourceConfigParams"
+                            data-source-name="dataSourceConfigResource"
+                            total-record-prop="totalRecord"
+                            current-page-param="currentPage"
+                            allow-auto-load="true"
+                            page="true">
+                    </g-data-source>
+
+                    <g-data-grid ng-cloak g-height="500px" data-source-name="dataSourceConfigResource">
+                        <g-column width="10%">
+                            操作
+                            <g-column-tmpl>
+                                <div>
+                                    <a href="javascript:void(0)" ng-click="deleteDataSourceConfig(row)">
+                                        <i class="fi fi-del"></i></a>
+                                    <a href="javascript:void(0)" ng-click="updateDataSourceConfig(row)">
+                                        <span class="glyphicon glyphicon-edit"></span></a>
+                                </div>
+                            </g-column-tmpl>
+                        </g-column>
+                        <g-column width="10%" data="dataSourceName">数据源名称</g-column>
+                        <g-column width="20%" data="connectionPool">数据源驱动</g-column>
+                        <g-column width="20%" data="settings.url">数据源地址</g-column>
+                        <g-column width="10%" data="settings.username">数据源用户名</g-column>
+                        <g-column width="10%" data="settings.password">数据源密码</g-column>
+                        <g-column width="20%" data="settings.driverClassName">数据源连接类</g-column>
+                    </g-data-grid>
+                </div>
+            </div>
+
+            <div class="page-container">
+                <g-pagination-navi source-name="dataSourceConfigResource"></g-pagination-navi>
+                <g-pagination-size source-name="dataSourceConfigResource"></g-pagination-size>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="dataSourceConfigModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-lg" role="document" style="width:500px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel1">{{dataSourceConfigConfig.id?"修改数据源":"新增数据源"}}</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>数据源名称</label>
+                                        <input type="text" class="form-control" placeholder="请输入"
+                                               ng-disabled="dataSourceConfigConfig.id"
+                                               ng-model="dataSourceConfigConfig.dataSourceName"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>数据源驱动</label>
+                                        <input type="text" class="form-control" placeholder="请输入"
+                                               ng-model="dataSourceConfigConfig.connectionPool"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>数据源地址</label>
+                                        <input type="text" class="form-control" placeholder="请输入"
+                                               ng-model="dataSourceConfigConfig.settings.url"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>数据源用户名</label>
+                                        <input type="text" class="form-control" placeholder="请输入"
+                                               ng-model="dataSourceConfigConfig.settings.username"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>数据源密码</label>
+                                        <input type="text" class="form-control" placeholder="请输入"
+                                               ng-model="dataSourceConfigConfig.settings.password"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>数据源连接类</label>
+                                        <input type="text" class="form-control" placeholder="请输入"
+                                               ng-model="dataSourceConfigConfig.settings.driverClassName"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>最大等待时间</label>
+                                        <input type="text" class="form-control" placeholder="请输入"
+                                               ng-model="dataSourceConfigConfig.settings.maxWait"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>最小连接数</label>
+                                        <input type="text" class="form-control" placeholder="请输入"
+                                               ng-model="dataSourceConfigConfig.settings.minIdel"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>最大连接数</label>
+                                        <input type="text" class="form-control" placeholder="请输入"
+                                               ng-model="dataSourceConfigConfig.settings.maxActive"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>初始大小</label>
+                                        <input type="text" class="form-control" placeholder="请输入"
+                                               ng-model="dataSourceConfigConfig.settings.initialSize"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer text-right">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-default" ng-click="save()">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

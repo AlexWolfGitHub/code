@@ -1,0 +1,143 @@
+<div>
+    <div class="tab-content">
+        <div class="content elastic-layout" id="consumeGroupManager">
+            <div class="content-sidebar" >
+                <div class="tool-box">
+                    <a href="javascript:void(0)" ng-click="add()"><i class="fa fa-plus"></i></a>
+                </div>
+
+                <dl class="search-box">
+                    <dt class="title">查询条件</dt>
+                    <dd>
+                        <form>
+                            <div class="form-group">
+                                <label>消费组名称</label>
+                                <input type="text" class="form-control" placeholder="消费组名称" ng-model="consumerGroupParams.groupName"/>
+                            </div>
+                            <div class="form-group">
+                                <label>调用服务</label>
+                                <input type="text" class="form-control" placeholder="调用服务" ng-model="consumerGroupParams.serviceRefCode"/>
+                            </div>
+                            <button type="button" class="btn btn-default" ng-click="searchConsumerGroup()">查询</button>
+                        </form>
+                    </dd>
+                </dl>
+            </div>
+            <div class="content-main pl210 elastic-layout">
+                <div class="grid-container elastic-layout elastic-grid">
+                    <g-data-source
+                            url="/esb-manager/projects/:projectName/mqTopic/:topicName/consumerGroup"
+                            page-size="10"
+                            current-page="1"
+                            records-prop="records"
+                            total-page-field = "totalPage"
+                            data-params="consumerGroupParams"
+                            data-source-name="consumerGroupResource"
+                            total-record-prop="totalRecord"
+                            current-page-param="currentPage"
+                            allow-auto-load = "true"
+                            page="true">
+                    </g-data-source>
+
+                    <g-data-grid ng-cloak g-height="500px" data-source-name="consumerGroupResource">
+                        <g-column >
+                            操作
+                            <g-column-tmpl>
+                                <div>
+                                    <a href="javascript:void(0)" ng-click="deleteConsumerGroup(row)">
+                                        <i class="fi fi-del"></i></a>
+                                    <a href="javascript:void(0)" ng-click="updateConsumerGroup(row)">
+                                        <span class="glyphicon glyphicon-edit" ></span></a>
+                                </div>
+                            </g-column-tmpl>
+                        </g-column>
+                        <g-column data="groupName" >消费组名称</g-column>
+                        <g-column data="settings.concurrencyMode|concurrencyModeFilter" >并发模式</g-column>
+                        <g-column data="settings.processingMode|processingModeFilter" >处理模式</g-column>
+                        <g-column data="serviceRefCode" >消费服务</g-column>
+                        <g-column data="consumerCount" >消费线程数</g-column>
+                        <g-column data="settings.singleConsumeCount" >单次消费消息数</g-column>
+                        <g-column data="settings.tags" >tags</g-column>
+                    </g-data-grid>
+                </div>
+            </div>
+
+            <div class="page-container">
+                <g-pagination-navi source-name="consumeGroupResource"></g-pagination-navi>
+                <g-pagination-size source-name="consumeGroupResource"></g-pagination-size>
+            </div>
+            </div>
+        </div>
+
+    <div class="modal fade" id="consumerGroupModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-lg" role="document" style="width:500px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel1">{{consumerGroupConfig.id?"编辑消费组":"注册消费组"}}</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>消费组名称</label>
+                                        <input type="text" class="form-control" placeholder="消费组名称" ng-disabled="consumerGroupConfig.id" ng-model="consumerGroupConfig.groupName"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>消费并发模式</label>
+                                        <g-dropdown list-type="single" placeholder="请选择"
+                                                    source="concurrencyModeSource"
+                                                    ng-model="consumerGroupConfig.settings.concurrencyMode" display-express="concurrency" value-prop="concurrencyMode"
+                                                    >
+                                        </g-dropdown>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>消费处理模式</label>
+                                        <g-dropdown list-type="single" placeholder="请选择"
+                                                    source="processingModeSource"
+                                                    ng-model="consumerGroupConfig.settings.processingMode" display-express="processing" value-prop="processingMode"
+                                                    >
+                                        </g-dropdown>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>消费服务</label>
+                                        <input type="text" class="form-control" placeholder="消费服务" ng-model="consumerGroupConfig.serviceRefCode"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>单次消费的消息数量</label>
+                                        <input type="text" class="form-control" placeholder="单次消费的消息数量" ng-model="consumerGroupConfig.settings.singleConsumeCount"/>
+                                    </div>
+                                </div><div class="col-md-6">
+                                <div class="form-group">
+                                    <label>消费线程数量</label>
+                                    <input type="text" class="form-control" placeholder="消费线程数量" ng-model="consumerGroupConfig.consumerCount"/>
+                                </div>
+                            </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>tags</label>
+                                        <input type="text" class="form-control" placeholder="tags" ng-model="consumerGroupConfig.settings.tags"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer text-right">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-default" ng-click="save()">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

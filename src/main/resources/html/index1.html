@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css"/>
+    <script src="../bower_components/requirejs/require.js" data-main="../static/app.js"
+            data-bootstrap-modules="'system/IndexModule1'"></script>
+</head>
+<body >
+    <div ng-app="" class="group">
+        <form>
+        <div class="col-md-6 form-group">
+            <input type="text" class="form-control" ng-model="test">
+            {{test}}
+        </div>
+        </form>
+    </div>
+
+    <div ng-controller="IndexController1" class="group">
+        <form>
+            <div class="col-md-6 form-group">
+                <input type="text" class="form-control" ng-model="test">
+                {{test}}
+            </div>
+        </form>
+    </div>
+</body>
+</html>

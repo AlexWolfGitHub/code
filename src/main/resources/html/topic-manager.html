@@ -1,0 +1,395 @@
+<div>
+    <div class="tab-bar">
+        <ul class="tab-items" id="topicTab">
+            <li href="#topicManager" style="cursor: pointer;">topic管理</li>
+            <li href="#failedMessage" style="cursor: pointer">失败消息处理</li>
+        </ul>
+    </div>
+    <div class="tab-content">
+        <div class="tab-pane content " id="topicManager" ng-style="searchBoxHeight">
+            <div class="content-sidebar">
+                <div class="tool-box">
+                    <a href="javascript:void(0)" ng-click="add()"><i class="fa fa-plus"></i></a>
+                </div>
+
+                <dl class="search-box">
+                    <dt class="title">查询条件</dt>
+                    <dd>
+                        <form>
+                            <div class="form-group">
+                                <label>topic名称</label>
+                                <input type="text" class="form-control" placeholder="topic名称"
+                                       ng-model="mqTopicParams.topicName"/>
+                            </div>
+                            <div class="form-group">
+                                <label>MQ名称</label>
+                                <input type="text" class="form-control" placeholder="MQ名称"
+                                       ng-model="mqTopicParams.mqName"/>
+                            </div>
+                            <button type="button" class="btn btn-default" ng-click="searchTopic()">查询</button>
+                        </form>
+                    </dd>
+                </dl>
+            </div>
+            <div class="content-main pl210 ">
+                <div class="grid-container  elastic-grid">
+                    <g-data-source
+                            url="/esb-manager/projects/:projectName/mqTopic"
+                            page-size="10"
+                            current-page="1"
+                            records-prop="records"
+                            total-page-field="totalPage"
+                            data-params="mqTopicParams"
+                            data-source-name="topicResource"
+                            total-record-prop="totalRecord"
+                            current-page-param="currentPage"
+                            allow-auto-load="true"
+                            page="true">
+                    </g-data-source>
+
+                    <g-data-grid g-height="470px" ng-cloak data-source-name="topicResource">
+                        <g-column width="115px">
+                            操作
+                            <g-column-tmpl>
+                                <div>
+                                    <a href="javascript:void(0)" ng-click="deleteTopic(row)">
+                                        <i class="fi fi-del"></i></a>
+                                    <a href="javascript:void(0)" ng-click="updateTopic(row)">
+                                        <span class="glyphicon glyphicon-edit"></span></a>
+                                    <a href="#/projectName/{{projectName}}/{{projectId}}/topicName/{{row.topicName}}">消费组</a>
+                                </div>
+                            </g-column-tmpl>
+                        </g-column>
+                        <g-column width="115px" data="mqName">MQ名称</g-column>
+                        <g-column width="115px" data="consumerCount">默认消费线程数</g-column>
+                        <g-column width="115px" data="settings.perPullCount">默认单位时间拉取消息数</g-column>
+                        <g-column width="115px" data="settings.processingMode | processingModeFilter">默认消费处理模式
+                        </g-column>
+                        <g-column width="115px" data="settings.concurrencyMode | concurrencyModeFilter">默认消费并发模式
+                        </g-column>
+                        <g-column width="115px" data="settings.singleConsumeCount">默认单次消费消息数</g-column>
+                        <g-column width="115px" data="topicName">topic名称</g-column>
+                    </g-data-grid>
+                </div>
+            </div>
+
+            <div class="page-container">
+                <g-pagination-navi source-name="topicResource"></g-pagination-navi>
+                <g-pagination-size source-name="topicResource"></g-pagination-size>
+            </div>
+        </div>
+
+        <div class="tab-pane content " id="failedMessage">
+            <div class="content-sidebar">
+                <dl class="search-box">
+                    <dt class="title">查询条件</dt>
+                    <dd>
+                        <form>
+                            <div class="form-group">
+                                <label>topic</label>
+                                <input type="text" class="form-control" placeholder="topic"
+                                       ng-model="mqMesParams.topicName"/>
+                            </div>
+                            <div class="form-group">
+                                <label>tags</label>
+                                <input type="text" class="form-control" placeholder="tags" ng-model="mqMesParams.tags"/>
+                            </div>
+                            <div class="form-group">
+                                <label>消费组</label>
+                                <input type="text" class="form-control" placeholder="消费组"
+                                       ng-model="mqMesParams.groupName"/>
+                            </div>
+                            <div class="form-group">
+                                <label>异常信息</label>
+                                <input type="text" class="form-control" placeholder="异常信息"
+                                       ng-model="mqMesParams.message"/>
+                            </div>
+                            <div class="form-group">
+                                <label>状态</label>
+                                <g-dropdown list-type="single" placeholder="请选择"
+                                            source="states"
+                                            ng-model="mqMesParams.state" display-express="statesName"
+                                            value-prop="statesId"
+                                >
+                                </g-dropdown>
+                            </div>
+                            <div class="form-group">
+                                <label>请求开始时间</label>
+                                <g-date format="yyyy-MM-dd HH:mm" ng-model="mqMesParams.beginDate"></g-date>
+                            </div>
+                            <div class="form-group">
+                                <label>请求结束时间</label>
+                                <g-date format="yyyy-MM-dd HH:mm" ng-model="mqMesParams.endDate"></g-date>
+                            </div>
+                            <button type="button" class="btn btn-default" ng-click="searchMqMes()">查询</button>
+                        </form>
+                    </dd>
+                </dl>
+            </div>
+
+            <div class="content-main pl210 ">
+
+                <button type="button" class="btn btn-default" ng-click="deleteMutiMes()">批量移除</button>
+                <button type="button" class="btn btn-default" ng-click="resendMutiMes()">批量重发</button>
+                <button type="button" class="btn btn-default" ng-click="deleteGroup()">组移除</button>
+                <button type="button" class="btn btn-default" ng-click="resendGroup()">组重发</button>
+                <span></span>
+
+                <div class="grid-container  elastic-grid">
+                    <g-data-source
+                            url="/esb-manager/projects/:projectName/mqMes"
+                            page-size="10"
+                            current-page="1"
+                            records-prop="records"
+                            total-page-field="totalPage"
+                            data-params="mqMesParams"
+                            data-source-name="mqMesResource"
+                            total-record-prop="totalRecord"
+                            current-page-param="currentPage"
+                            allow-auto-load="true"
+                            page="true">
+                    </g-data-source>
+
+                    <g-data-grid g-height="470px" data-source-name="mqMesResource" data-checked-rows="empCheckedRows"
+                                 ng-cloak>
+                        <g-checkbox-column></g-checkbox-column>
+                        <g-column width="115px">
+                            操作
+                            <g-column-tmpl>
+                                <div>
+                                    <a href="javascript:void(0)" ng-if="row.state<=2"
+                                       ng-click="deleteMes(row.id)">移除</a>
+                                    <a href="javascript:void(0)" ng-click="resendMes(row.id)">重发</a>
+                                    <a href="javascript:void(0)" ng-click="getMqMes(row)">查看</a>
+                                </div>
+                            </g-column-tmpl>
+                        </g-column>
+
+                        <g-column width="185px" data="node">节点</g-column>
+                        <g-column width="115px" data="topicName">topic</g-column>
+                        <g-column width="115px" data="tags">tags</g-column>
+                        <g-column width="115px" data="messageKey">消息密钥</g-column>
+                        <g-column width="115px" data="groupName">消费组名称</g-column>
+                        <g-column width="185px" data="date|date:'yyyy-MM-dd HH:mm:ss'">消费时间</g-column>
+                    </g-data-grid>
+                </div>
+            </div>
+
+            <div class="page-container">
+                <g-pagination-navi source-name="mqMesResource"></g-pagination-navi>
+                <g-pagination-size source-name="mqMesResource"></g-pagination-size>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="topicModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-lg" role="document" style="width:500px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel1">{{topicConfig.id?"编辑队列信息":"新增队列"}}</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>topic名称</label>
+                                        <input type="text" class="form-control" placeholder="topic名称"
+                                               ng-disabled="topicConfig.id" ng-model="topicConfig.topicName"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>默认消费并发模式</label>
+                                        <g-dropdown list-type="single" placeholder="请选择"
+                                                    source="concurrencyModeSource"
+                                                    ng-model="topicConfig.settings.concurrencyMode"
+                                                    display-express="concurrency" value-prop="concurrencyMode"
+                                                    lazy-render-drop-items="true"
+                                        >
+                                        </g-dropdown>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>默认消费处理模式</label>
+                                        <g-dropdown list-type="single" placeholder="请选择"
+                                                    source="processingModeSource"
+                                                    ng-model="topicConfig.settings.processingMode"
+                                                    display-express="processing" value-prop="processingMode"
+                                        >
+                                        </g-dropdown>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>默认消费线程数</label>
+                                        <input type="text" class="form-control" placeholder="默认消费线程数"
+                                               ng-model="topicConfig.consumerCount"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>默认单次消费消息数</label>
+                                        <input type="text" class="form-control" placeholder="默认单次消费消息数"
+                                               ng-model="topicConfig.settings.singleConsumeCount"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>默认单位时间拉取消息数</label>
+                                        <input type="text" class="form-control" placeholder="默认单位时间拉取消息数"
+                                               ng-model="topicConfig.settings.perPullCount"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>MQ</label>
+                                        <input type="text" class="form-control" placeholder="MQ名称"
+                                               ng-model="topicConfig.mqName"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>服务</label>
+                                        <input type="text" class="form-control" placeholder="服务"
+                                               ng-model="topicConfig.serviceMapping"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer text-right">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-default" ng-click="save()">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="mqMesModal" tabindex="-1" role="dialog" aria-labelledby="mqMesLabel">
+        <div class="modal-dialog modal-lg" role="document" style="width:1000px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="mqMesLabel1">失败消息处理详情</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>节点</label>
+                                        <input type="text" disabled="true" class="form-control" placeholder="节点"
+                                               ng-model="mqMesConfig.node"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>topic</label>
+                                        <input type="text" disabled="true" class="form-control" placeholder="topic"
+                                               ng-model="mqMesConfig.topicName"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>tags</label>
+                                        <input type="text" disabled="true" class="form-control" placeholder="tags"
+                                               ng-model="mqMesConfig.tags"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>消息密钥</label>
+                                        <input type="text" disabled="true" class="form-control" placeholder="消息密钥"
+                                               ng-model="mqMesConfig.messageKey"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>消费组</label>
+                                        <input type="text" disabled="true" class="form-control" placeholder="消费组"
+                                               ng-model="mqMesConfig.groupName"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>重试次数</label>
+                                        <input type="text" disabled="true" class="form-control" placeholder="重试次数"
+                                               ng-model="mqMesConfig.retryTime"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>状态</label>
+                                        <input type="text" disabled="true" class="form-control" placeholder="状态"
+                                               value="{{mqMesConfig.state|statesFilter}}">
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>消费时间</label>
+                                        <input type="text" disabled="true" class="form-control" placeholder="消费时间"
+                                               ng-model="mqMesConfig.date"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>异常信息</label>
+                                        <textarea cols="30" rows="24" disabled="true" class="form-control"
+                                                  ng-model="mqMesConfig.message" ng-cloak></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer text-right">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="groupModal" tabindex="-1" role="dialog" aria-labelledby="groupLabel">
+        <div class="modal-dialog modal-lg" role="document" style="width: 300px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="groupLabel">{{r?"组重发":"组移除"}}</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>消费组名称</label>
+                                        <input type="text" class="form-control" placeholder="组名称" ng-model="groupName"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer text-right">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="groupManage()">
+                        {{r?"重发":"移除"}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
