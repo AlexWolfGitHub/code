@@ -17,7 +17,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Car implements Serializable{
+public class Car extends BaseModel implements Serializable{
 
     @Id
     @GeneratedValue
